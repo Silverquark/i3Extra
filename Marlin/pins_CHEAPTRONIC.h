@@ -29,8 +29,6 @@
 #endif
 
 #define BOARD_NAME         "Cheaptronic v1.0"
-#define LARGE_FLASH        true
-
 //
 // Limit Switches
 //
@@ -71,8 +69,8 @@
 //
 // Heaters / Fans
 //
-#define HEATER_0_PIN       19 // EXTRUDER 1
-#define HEATER_1_PIN       23 // EXTRUDER 2
+#define HEATER_0_PIN       19   // EXTRUDER 1
+#define HEATER_1_PIN       23   // EXTRUDER 2
 #define HEATER_BED_PIN     22
 
 //
@@ -81,10 +79,6 @@
 // Cheaptronic v1.0 doesn't support LCD
 #define LCD_PINS_RS        -1
 #define LCD_PINS_ENABLE    -1
-#define LCD_PINS_D4        -1
-#define LCD_PINS_D5        -1
-#define LCD_PINS_D6        -1
-#define LCD_PINS_D7        -1
 
 // Cheaptronic v1.0 doesn't support keypad
 #define BTN_EN1            -1

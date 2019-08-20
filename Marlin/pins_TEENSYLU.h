@@ -79,10 +79,6 @@
 
 #define BOARD_NAME         "Teensylu"
 
-#define USBCON 1286  // Disable MarlinSerial etc.
-#define LARGE_FLASH        true
-
-
 //
 // Limit Switch definitions that match the SCHEMATIC
 //
@@ -131,7 +127,9 @@
 #define HEATER_0_PIN            15   // C5 PWM3B - Extruder
 #define HEATER_BED_PIN          14   // C4 PWM3C
 
-#define FAN_PIN                 16   // C6 PWM3A
+#ifndef FAN_PIN
+  #define FAN_PIN               16   // C6 PWM3A
+#endif
 
 //
 // Misc. Functions

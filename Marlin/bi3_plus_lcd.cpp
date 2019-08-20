@@ -51,7 +51,8 @@ void lcdTask() {
 void executeLoopedOperation(millis_t ms) {
   if ((opMode != OPMODE_NONE) && (ELAPSED(ms, nextOpTime))) {
     if (opMode == OPMODE_LEVEL_INIT) {
-      if (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && axis_homed[Z_AXIS]) {//stuck if levelling problem?
+      if (SBI(axis_homed, X_AXIS) && SBI(axis_homed, Y_AXIS) && SBI(axis_homed, Z_AXIS)) {
+      //if (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && axis_homed[Z_AXIS]) {//stuck if levelling problem?
         opMode = OPMODE_NONE;
         lcdShowPage(56);//level 2 menu
       }
@@ -518,7 +519,8 @@ void readLcdSerial() {
       case 0x4C: {//level menu OK
           if (lcdData == 0) {
             lcdShowPage(55); //level 1
-            axis_homed[X_AXIS] = axis_homed[Y_AXIS] = axis_homed[Z_AXIS] = false;
+            //axis_homed[X_AXIS] = axis_homed[Y_AXIS] = axis_homed[Z_AXIS] = false;
+            SBI(axis_homed, X_AXIS) = SBI(axis_homed, Y_AXIS) = SBI(axis_homed, Z_AXIS) = false;
             enqueue_and_echo_commands_P(PSTR("G90")); //absolute mode
             enqueue_and_echo_commands_P((PSTR("G28")));//homeing
             nextOpTime = millis() + 200;
@@ -673,7 +675,8 @@ void readLcdSerial() {
         }
       case 0x54: {//disable motors OK!!!
           enqueue_and_echo_commands_P(PSTR("M84"));
-          axis_homed[X_AXIS] = axis_homed[Y_AXIS] = axis_homed[Z_AXIS] = false;
+          //axis_homed[X_AXIS] = axis_homed[Y_AXIS] = axis_homed[Z_AXIS] = false;
+          SBI(axis_homed, X_AXIS) = SBI(axis_homed, Y_AXIS) = SBI(axis_homed, Z_AXIS) = false;
           break;
         }
       case 0x43: {//home x OK!!!

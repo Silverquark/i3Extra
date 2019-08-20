@@ -9,17 +9,26 @@ cmake_minimum_required(VERSION 2.8)
 #                                                                    #
 # Usage under Windows:                                               #
 #                                                                    #
+<<<<<<< HEAD
 #    From Marlin/buildroot/share/cmake folder: :                     #
+=======
+#    From Marlin/buildroot/share/cmake folder:                       #
+>>>>>>> upstream-marlin/1.1.x
 #        mkdir build && cd build                                     #
 #        cmake -G"Unix Makefiles" ..                                 #
 #        make                                                        #
 #====================================================================#
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> upstream-marlin/1.1.x
 #====================================================================#
 # Download marlin-cmake scriptfiles if not already installed         #
 # and add the path to the module path                                #
 #====================================================================#
 
+<<<<<<< HEAD
 if(NOT EXISTS ${CMAKE_BINARY_DIR}/marlin-cmake)
 
     file(DOWNLOAD https://raw.githubusercontent.com/tohara/marlin-cmake/v1.0.0/modules/Arduino_SDK.cmake
@@ -45,6 +54,28 @@ if(NOT EXISTS ${CMAKE_BINARY_DIR}/marlin-cmake)
 endif()
 
 set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_BINARY_DIR}/marlin-cmake/modules)
+=======
+set(SCRIPT_BRANCH 1.0.2) #Set to wanted marlin-cmake release tag or branch
+
+if(NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake)
+
+	file(DOWNLOAD https://github.com/tohara/marlin-cmake/archive/${SCRIPT_BRANCH}.tar.gz
+				  ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake-src.tar.gz SHOW_PROGRESS)
+
+	execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xvf ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake-src.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+
+	file(RENAME ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake-${SCRIPT_BRANCH} ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake)
+	file(REMOVE ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake-src.tar.gz)
+
+
+endif()
+
+if(WIN32 AND NOT EXISTS ${CMAKE_BINARY_DIR}/make.exe)
+    file(COPY ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/resources/make.exe DESTINATION ${CMAKE_BINARY_DIR}/)
+endif()
+
+set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/modules)
+>>>>>>> upstream-marlin/1.1.x
 
 #====================================================================#
 #  Custom path to Arduino SDK can be set here.                       #
@@ -63,7 +94,11 @@ include(marlin_cmake_functions)
 #====================================================================#
 #  Set toolchain file for arduino                                    #
 #====================================================================#
+<<<<<<< HEAD
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_BINARY_DIR}/marlin-cmake/toolchain/ArduinoToolchain.cmake) # Arduino Toolchain
+=======
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/marlin-cmake/toolchain/ArduinoToolchain.cmake) # Arduino Toolchain
+>>>>>>> upstream-marlin/1.1.x
 
 #====================================================================#
 #  Setup Project                                                     #

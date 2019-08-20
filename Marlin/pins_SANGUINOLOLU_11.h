@@ -59,8 +59,6 @@
   #define BOARD_NAME "Sanguinololu <1.2"
 #endif
 
-#define IS_MELZI (MB(MELZI) || MB(MELZI_MAKR3D))
-
 //
 // Limit Switches
 //
@@ -92,23 +90,23 @@
 //
 // Heaters / Fans
 //
-#define HEATER_0_PIN       13 // (extruder)
+#define HEATER_0_PIN       13   // (extruder)
 
 #if ENABLED(SANGUINOLOLU_V_1_2)
 
-  #define HEATER_BED_PIN   12 // (bed)
+  #define HEATER_BED_PIN   12   // (bed)
   #define X_ENABLE_PIN     14
   #define Y_ENABLE_PIN     14
   #define Z_ENABLE_PIN     26
   #define E0_ENABLE_PIN    14
 
-  #if ENABLED(LCD_I2C_PANELOLU2)
-    #define FAN_PIN         4 // Uses Transistor1 (PWM) on Panelolu2's Sanguino Adapter Board to drive the fan
+  #if !defined(FAN_PIN) && ENABLED(LCD_I2C_PANELOLU2)
+    #define FAN_PIN         4   // Uses Transistor1 (PWM) on Panelolu2's Sanguino Adapter Board to drive the fan
   #endif
 
 #else
 
-  #define HEATER_BED_PIN   14 // (bed)
+  #define HEATER_BED_PIN   14   // (bed)
   #define X_ENABLE_PIN     -1
   #define Y_ENABLE_PIN     -1
   #define Z_ENABLE_PIN     -1
@@ -116,8 +114,8 @@
 
 #endif
 
-#if MB(AZTEEG_X1) || MB(STB_11) || IS_MELZI
-  #define FAN_PIN           4 // Works for Panelolu2 too
+#if !defined(FAN_PIN) && (MB(AZTEEG_X1) || MB(STB_11) || ENABLED(IS_MELZI))
+  #define FAN_PIN           4   // Works for Panelolu2 too
 #endif
 
 //
@@ -133,15 +131,24 @@
 //#define SDSS               24
 #define SDSS               31
 
-#if IS_MELZI
-  #define LED_PIN           27
+#if ENABLED(IS_MELZI)
+  #define LED_PIN          27
 #elif MB(STB_11)
-  #define LCD_BACKLIGHT_PIN 17 // LCD backlight LED
+  #define LCD_BACKLIGHT_PIN 17   // LCD backlight LED
 #endif
 
 #if DISABLED(SPINDLE_LASER_ENABLE) && ENABLED(SANGUINOLOLU_V_1_2) && !(ENABLED(ULTRA_LCD) && ENABLED(NEWPANEL))  // try to use IO Header
-  #define CASE_LIGHT_PIN         4   // MUST BE HARDWARE PWM  - see if IO Header is available
+  #define CASE_LIGHT_PIN     4   // MUST BE HARDWARE PWM  - see if IO Header is available
 #endif
+
+/**
+ * Sanguinololu 1.4 AUX pins:
+ *
+ *           PWM  TX1  RX1  SDA  SCL
+ *  12V  5V  D12  D11  D10  D17  D16
+ *  GND GND  D31  D30  D29  D28  D27
+ *            A4   A3   A2   A1   A0
+ */
 
 //
 // LCD / Controller
@@ -152,15 +159,15 @@
 
     #if ENABLED(U8GLIB_ST7920) // SPI GLCD 12864 ST7920 ( like [www.digole.com] ) For Melzi V2.0
 
-      #if IS_MELZI // Melzi board
-        #define LCD_PINS_RS     30 // CS chip select /SS chip slave select
-        #define LCD_PINS_ENABLE 29 // SID (MOSI)
-        #define LCD_PINS_D4     17 // SCK (CLK) clock
+      #if ENABLED(IS_MELZI)
+        #define LCD_PINS_RS     30   // CS chip select /SS chip slave select
+        #define LCD_PINS_ENABLE 29   // SID (MOSI)
+        #define LCD_PINS_D4     17   // SCK (CLK) clock
         // Pin 27 is taken by LED_PIN, but Melzi LED does nothing with
         // Marlin so this can be used for BEEPER_PIN. You can use this pin
         // with M42 instead of BEEPER_PIN.
         #define BEEPER_PIN      27
-      #else        // Sanguinololu 1.3
+      #else        // Sanguinololu >=1.3
         #define LCD_PINS_RS      4
         #define LCD_PINS_ENABLE 17
         #define LCD_PINS_D4     30
@@ -178,7 +185,12 @@
 
         #define BEEPER_PIN      29
         #define DOGLCD_CS       17
-        #define LCD_BACKLIGHT_PIN 28 // PA3
+        #define LCD_BACKLIGHT_PIN 28   // PA3
+
+      #elif ENABLED(IS_MELZI)
+
+        #define BEEPER_PIN      27
+        #define DOGLCD_CS       28
 
       #else // !MAKRPANEL
 
@@ -210,9 +222,9 @@
 
   #if ENABLED(LCD_I2C_PANELOLU2)
 
-    #if IS_MELZI
+    #if ENABLED(IS_MELZI)
       #define BTN_ENC           29
-      #define LCD_SDSS          30 // Panelolu2 SD card reader rather than the Melzi
+      #define LCD_SDSS          30   // Panelolu2 SD card reader rather than the Melzi
     #else
       #define BTN_ENC           30
     #endif
@@ -227,19 +239,33 @@
     #define BTN_EN2             30
 
     #ifndef ST7920_DELAY_1
-      #define ST7920_DELAY_1 DELAY_0_NOP
+      #define ST7920_DELAY_1 DELAY_NS(0)
+    #endif
+    #ifndef ST7920_DELAY_2
+      #define ST7920_DELAY_2 DELAY_NS(188)
     #endif
     #ifndef ST7920_DELAY_3
-      #define ST7920_DELAY_2 DELAY_3_NOP
-    #endif
-    #ifndef ST7920_DELAY_3
-      #define ST7920_DELAY_3 DELAY_0_NOP
+      #define ST7920_DELAY_3 DELAY_NS(0)
     #endif
 
-  #else  // !LCD_I2C_PANELOLU2 && !LCD_FOR_MELZI
+  #elif ENABLED(ZONESTAR_LCD) // For the Tronxy Melzi boards
+
+    #define LCD_PINS_RS         28
+    #define LCD_PINS_ENABLE     29
+    #define LCD_PINS_D4         10
+    #define LCD_PINS_D5         11
+    #define LCD_PINS_D6         16
+    #define LCD_PINS_D7         17
+    #define ADC_KEYPAD_PIN       1
+
+    // Not used
+    #define BTN_EN1             -1
+    #define BTN_EN2             -1
+
+  #else  // !LCD_I2C_PANELOLU2 && !LCD_FOR_MELZI && !ZONESTAR_LCD
 
     #define BTN_ENC             16
-    #define LCD_SDSS            28 // Smart Controller SD card reader rather than the Melzi
+    #define LCD_SDSS            28   // Smart Controller SD card reader rather than the Melzi
 
   #endif
 
@@ -253,8 +279,8 @@
 #if ENABLED(SPINDLE_LASER_ENABLE)
   #if !MB(AZTEEG_X1) && ENABLED(SANGUINOLOLU_V_1_2) && !(ENABLED(ULTRA_LCD) && ENABLED(NEWPANEL))  // try to use IO Header
 
-    #define SPINDLE_LASER_ENABLE_PIN 10  // Pin should have a pullup/pulldown!
-    #define SPINDLE_LASER_PWM_PIN     4  // MUST BE HARDWARE PWM
+    #define SPINDLE_LASER_ENABLE_PIN 10   // Pin should have a pullup/pulldown!
+    #define SPINDLE_LASER_PWM_PIN     4   // MUST BE HARDWARE PWM
     #define SPINDLE_DIR_PIN          11
 
   #elif !MB(MELZI)  // use X stepper motor socket
@@ -280,7 +306,7 @@
      *                                   MS3  O|     |O  2A
      *                                /RESET  O|     |O  1A
      *                                /SLEEP  O|     |O  1B
-     *  SPINDLE_LASER_PWM_PIN  STEP  O|     |O  VDD
+     *  SPINDLE_LASER_PWM_PIN           STEP  O|     |O  VDD
      *  SPINDLE_LASER_ENABLE_PIN         DIR  O|     |O  GND
      *                                         -------
      *
@@ -292,8 +318,8 @@
     #define X_DIR_PIN                 0
     #define X_ENABLE_PIN             14
     #define X_STEP_PIN                1
-    #define SPINDLE_LASER_PWM_PIN    15  // MUST BE HARDWARE PWM
-    #define SPINDLE_LASER_ENABLE_PIN 21  // Pin should have a pullup!
-    #define SPINDLE_DIR_PIN          -1  // No pin available on the socket for the direction pin
+    #define SPINDLE_LASER_PWM_PIN    15   // MUST BE HARDWARE PWM
+    #define SPINDLE_LASER_ENABLE_PIN 21   // Pin should have a pullup!
+    #define SPINDLE_DIR_PIN          -1   // No pin available on the socket for the direction pin
   #endif
 #endif // SPINDLE_LASER_ENABLE

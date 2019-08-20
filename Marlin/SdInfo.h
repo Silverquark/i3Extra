@@ -26,12 +26,11 @@
  *
  * This file is part of the Arduino Sd2Card Library
  */
-#include "Marlin.h"
-#if ENABLED(SDSUPPORT)
+#ifndef _SDINFO_H_
+#define _SDINFO_H_
 
-#ifndef SdInfo_h
-#define SdInfo_h
 #include <stdint.h>
+
 // Based on the document:
 //
 // SD Specifications
@@ -42,63 +41,43 @@
 // May 18, 2010
 //
 // http://www.sdcard.org/developers/tech/sdcard/pls/simplified_specs
-//------------------------------------------------------------------------------
+
 // SD card commands
-/** GO_IDLE_STATE - init card in spi mode if CS low */
-uint8_t const CMD0 = 0X00;
-/** SEND_IF_COND - verify SD Memory Card interface operating condition.*/
-uint8_t const CMD8 = 0X08;
-/** SEND_CSD - read the Card Specific Data (CSD register) */
-uint8_t const CMD9 = 0X09;
-/** SEND_CID - read the card identification information (CID register) */
-uint8_t const CMD10 = 0X0A;
-/** STOP_TRANSMISSION - end multiple block read sequence */
-uint8_t const CMD12 = 0X0C;
-/** SEND_STATUS - read the card status register */
-uint8_t const CMD13 = 0X0D;
-/** READ_SINGLE_BLOCK - read a single data block from the card */
-uint8_t const CMD17 = 0X11;
-/** READ_MULTIPLE_BLOCK - read a multiple data blocks from the card */
-uint8_t const CMD18 = 0X12;
-/** WRITE_BLOCK - write a single data block to the card */
-uint8_t const CMD24 = 0X18;
-/** WRITE_MULTIPLE_BLOCK - write blocks of data until a STOP_TRANSMISSION */
-uint8_t const CMD25 = 0X19;
-/** ERASE_WR_BLK_START - sets the address of the first block to be erased */
-uint8_t const CMD32 = 0X20;
-/** ERASE_WR_BLK_END - sets the address of the last block of the continuous
-    range to be erased*/
-uint8_t const CMD33 = 0X21;
-/** ERASE - erase all previously selected blocks */
-uint8_t const CMD38 = 0X26;
-/** APP_CMD - escape for application specific command */
-uint8_t const CMD55 = 0X37;
-/** READ_OCR - read the OCR register of a card */
-uint8_t const CMD58 = 0X3A;
-/** SET_WR_BLK_ERASE_COUNT - Set the number of write blocks to be
-     pre-erased before writing */
-uint8_t const ACMD23 = 0X17;
-/** SD_SEND_OP_COMD - Sends host capacity support information and
-    activates the card's initialization process */
-uint8_t const ACMD41 = 0X29;
-//------------------------------------------------------------------------------
+uint8_t const CMD0 = 0x00,    // GO_IDLE_STATE - init card in spi mode if CS low
+              CMD8 = 0x08,    // SEND_IF_COND - verify SD Memory Card interface operating condition
+              CMD9 = 0x09,    // SEND_CSD - read the Card Specific Data (CSD register)
+              CMD10 = 0x0A,   // SEND_CID - read the card identification information (CID register)
+              CMD12 = 0x0C,   // STOP_TRANSMISSION - end multiple block read sequence
+              CMD13 = 0x0D,   // SEND_STATUS - read the card status register
+              CMD17 = 0x11,   // READ_SINGLE_BLOCK - read a single data block from the card
+              CMD18 = 0x12,   // READ_MULTIPLE_BLOCK - read a multiple data blocks from the card
+              CMD24 = 0x18,   // WRITE_BLOCK - write a single data block to the card
+              CMD25 = 0x19,   // WRITE_MULTIPLE_BLOCK - write blocks of data until a STOP_TRANSMISSION
+              CMD32 = 0x20,   // ERASE_WR_BLK_START - sets the address of the first block to be erased
+              CMD33 = 0x21,   // ERASE_WR_BLK_END - sets the address of the last block of the continuous range to be erased*/
+              CMD38 = 0x26,   // ERASE - erase all previously selected blocks */
+              CMD55 = 0x37,   // APP_CMD - escape for application specific command */
+              CMD58 = 0x3A,   // READ_OCR - read the OCR register of a card */
+              ACMD23 = 0x17,  // SET_WR_BLK_ERASE_COUNT - Set the number of write blocks to be pre-erased before writing */
+              ACMD41 = 0x29;  // SD_SEND_OP_COMD - Sends host capacity support information and activates the card's initialization process */
+
 /** status for card in the ready state */
-uint8_t const R1_READY_STATE = 0X00;
+uint8_t const R1_READY_STATE = 0x00;
 /** status for card in the idle state */
-uint8_t const R1_IDLE_STATE = 0X01;
+uint8_t const R1_IDLE_STATE = 0x01;
 /** status bit for illegal command */
-uint8_t const R1_ILLEGAL_COMMAND = 0X04;
+uint8_t const R1_ILLEGAL_COMMAND = 0x04;
 /** start data token for read or write single block*/
-uint8_t const DATA_START_BLOCK = 0XFE;
+uint8_t const DATA_START_BLOCK = 0xFE;
 /** stop token for write multiple blocks*/
-uint8_t const STOP_TRAN_TOKEN = 0XFD;
+uint8_t const STOP_TRAN_TOKEN = 0xFD;
 /** start data token for write multiple blocks*/
-uint8_t const WRITE_MULTIPLE_TOKEN = 0XFC;
+uint8_t const WRITE_MULTIPLE_TOKEN = 0xFC;
 /** mask for data response tokens after a write block operation */
-uint8_t const DATA_RES_MASK = 0X1F;
+uint8_t const DATA_RES_MASK = 0x1F;
 /** write data accepted token */
-uint8_t const DATA_RES_ACCEPTED = 0X05;
-//------------------------------------------------------------------------------
+uint8_t const DATA_RES_ACCEPTED = 0x05;
+
 /** Card IDentification (CID) register */
 typedef struct CID {
   // byte 0
@@ -134,7 +113,7 @@ typedef struct CID {
   /** CRC7 checksum */
   unsigned char crc : 7;
 } cid_t;
-//------------------------------------------------------------------------------
+
 /** CSD for version 1.00 cards */
 typedef struct CSDV1 {
   // byte 0
@@ -196,14 +175,14 @@ typedef struct CSDV1 {
   unsigned char always1 : 1;
   unsigned char crc : 7;
 } csd1_t;
-//------------------------------------------------------------------------------
+
 /** CSD for version 2.00 cards */
 typedef struct CSDV2 {
   // byte 0
   unsigned char reserved1 : 6;
   unsigned char csd_ver : 2;
   // byte 1
-  /** fixed to 0X0E */
+  /** fixed to 0x0E */
   unsigned char taac;
   // byte 2
   /** fixed to 0 */
@@ -278,12 +257,11 @@ typedef struct CSDV2 {
   /** checksum */
   unsigned char crc : 7;
 } csd2_t;
-//------------------------------------------------------------------------------
+
 /** union of old and new style CSD register */
 union csd_t {
   csd1_t v1;
   csd2_t v2;
 };
-#endif  // SdInfo_h
 
-#endif
+#endif // _SDINFO_H_

@@ -73,8 +73,6 @@
 
 #define BOARD_NAME         "Brainwave"
 
-#define USBCON 646  // Disable MarlinSerial etc.
-
 //
 // Limit Switches
 //
@@ -117,7 +115,9 @@
 #define HEATER_0_PIN       32   // A4 Extruder
 #define HEATER_BED_PIN     18   // E6 Bed
 
-#define FAN_PIN            31   // A3 Fan
+#ifndef FAN_PIN
+  #define FAN_PIN          31   // A3 Fan
+#endif
 
 //
 // Misc. Functions

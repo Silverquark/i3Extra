@@ -55,3 +55,4 @@ SPADDRESS=5000
 66=066_pid_finished.bmp
 67=067_pid_finished_pressed.bmp
 68=068_thermal_runaway.bmp
+69=069_incorrect_printer_error.bmp
